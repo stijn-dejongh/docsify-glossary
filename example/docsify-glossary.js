@@ -1,5 +1,5 @@
 /*!
- * docsify-glossary
+ * @stijn-dejongh/docsify-glossary
  * v0.0.2
  * https://github.com/stijn-dejongh/docsify-glossary#readme
  * (c) 2018-2022 Stijn Dejongh
@@ -108,24 +108,27 @@
         return new GlossaryConfigurationBuilder;
     }
     function replaceTerm(term, content, term_id) {
-        var link = " [$1](/_glossary?id=".concat(term_id, ") ");
+        var link = " [$1](/_glossary?id=".concat(term_id, ")");
         var re = new RegExp("\\s(".concat(term, ")\\s"), "ig");
-        return content.replace(re, link);
+        var reFullStop = new RegExp("\\s(".concat(term, ")."), "ig");
+        var reComma = new RegExp("\\s(".concat(term, "),"), "ig");
+        return content.replace(reComma, link + ",").replace(re, link + " ").replace(reFullStop, link + ".");
     }
-    function addLinks(content, next, terms, config) {
+    function addLinks(content, terms, config) {
+        var textWithReplacements = content;
         if (config.debug) {
             console.log("Adding links for terminology: ".concat(terms));
         }
         for (var term in terms) {
-            content = replaceTerm(term, content, terms[term]);
+            textWithReplacements = replaceTerm(term, textWithReplacements, terms[term]);
         }
-        next(content);
+        return textWithReplacements;
     }
     function loadTerminology(text, configuration) {
         var lines = text.split("\n");
         var dictionary = {};
         lines.forEach((function(line) {
-            if (line.startsWith(configuration.terminologyHeading)) {
+            if (line.trimStart().startsWith(configuration.terminologyHeading)) {
                 var term = line.replace(configuration.terminologyHeading, "").trim();
                 if (configuration.debug) {
                     console.log("detected glossary term: ".concat(term));
@@ -143,6 +146,10 @@
             return glossifyConfig().build();
         }
     }
+    function injectTerminologyInContent(content, configuration, next) {
+        content = addLinks(content, window.$docsify.terms, configuration);
+        next(content);
+    }
     function install(hook, _vm) {
         var configuration = loadProperties();
         if (configuration.debug) {
@@ -157,11 +164,11 @@
                 fetch(configuration.glossaryLocation).then((function(data) {
                     data.text().then((function(text) {
                         window.$docsify.terms = loadTerminology(text, configuration);
-                        addLinks(content, next, window.$docsify.terms, configuration);
+                        injectTerminologyInContent(content, configuration, next);
                     }));
                 }));
             }
-            addLinks(content, next, window.$docsify.terms, configuration);
+            injectTerminologyInContent(content, configuration, next);
         }));
     }
     if (!window.$docsify) {
