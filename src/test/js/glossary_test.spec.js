@@ -96,5 +96,17 @@ describe('Glossary terminology injection', () => {
 
         expect([...result.matchAll('/_glossary\\?id=api')]).toHaveLength(5);
     });
+
+    it('preserves spaces in title sequences', () => {
+        const textWithTitle = `
+          ## Information about the API
+          
+          Some API is configured to use another API.
+      `;
+
+        const result = addLinks(textWithTitle, dictionary, config);
+
+        expect(result).toContain('## Information about the [ API](/_glossary?id=api)');
+    });
 });
 

@@ -1,14 +1,31 @@
-export function replaceTerm(term, content, term_id) {
-    let link = ` [$1](/_glossary?id=${term_id})`;
+function replaceTermInLine(term, contentLine, linkId) {
+    let re = new RegExp(`\\s(${term})[\\s$]`, 'ig');
 
-    let re = new RegExp(`\\s(${term})\\s`, 'ig');
     let reFullStop = new RegExp(`\\s(${term}).`, 'ig');
     let reComma = new RegExp(`\\s(${term}),`, 'ig');
 
-    return content
-            .replace(reComma, link + ',')
+    let link = ` [$1](/_glossary?id=${linkId})`;
+
+    let replacement = contentLine.replace(reComma, link + ',')
             .replace(re, link + ' ')
             .replace(reFullStop, link + '.');
+
+    return isTitle(contentLine) ? replacement.replaceAll(`[${term}]`, `[ ${term}]`): replacement;
+}
+
+function isTitle(line) {
+    return line.trim().startsWith('#');
+}
+
+export function replaceTerm(content, term, linkId) {
+    let contentLines = content.split('\n');
+    let processedText = '';
+
+    contentLines.forEach( (line, _index) => {
+        let replacedLine = line.trim().length > 0 ? replaceTermInLine(term, line + ' ', linkId).trimEnd() : line;
+        processedText += replacedLine + '\n';
+    });
+    return processedText;
 }
 
 export function addLinks(content, terms, config) {
@@ -17,7 +34,7 @@ export function addLinks(content, terms, config) {
         console.log(`Adding links for terminology: ${terms}`);
     }
     for (let term in terms) {
-        textWithReplacements = replaceTerm(term, textWithReplacements, terms[term]);
+        textWithReplacements = replaceTerm(textWithReplacements, term, terms[term]);
     }
     return textWithReplacements;
 }
