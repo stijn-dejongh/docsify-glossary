@@ -94,8 +94,7 @@ describe('Glossary terminology injection', () => {
 
         const result = addLinks(textWithMultipleOccurrences, dictionary, config);
 
-        expect(result.match(new RegExp('/_glossary\\?id=api', 'g')) || [])
-                .toHaveLength(5);
+        expect([...result.matchAll('/_glossary\\?id=api')]).toHaveLength(5);
     });
 });
 

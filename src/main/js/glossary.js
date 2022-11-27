@@ -1,5 +1,3 @@
-import {configFromYaml, glossifyConfig} from './configuration';
-
 export function replaceTerm(term, content, term_id) {
     let link = ` [$1](/_glossary?id=${term_id})`;
 
@@ -44,47 +42,4 @@ export function loadTerminology(text, configuration) {
     });
 
     return dictionary;
-}
-
-function loadProperties() {
-    if (window.$docsify !== undefined && window.$docsify.glossify !== undefined) {
-        const configuredProperties = window.$docsify.glossify;
-        return configFromYaml(configuredProperties);
-    } else {
-        return glossifyConfig()
-                .build();
-    }
-}
-
-function injectTerminologyInContent(content, configuration, next) {
-    content = addLinks(content, window.$docsify.terms, configuration);
-    next(content);
-}
-
-export function install(hook, _vm) {
-
-    let configuration = loadProperties();
-    if (configuration.debug) {
-        console.log(`Using config options: ${configuration.glossaryLocation}, ${configuration.terminologyHeading}`);
-    }
-    hook.beforeEach(function (content, next) {
-
-        if (window.location.hash.match(/_glossary/g)) {
-            next(content);
-            return;
-        }
-
-        if (!window.$docsify.terms) {
-            fetch(configuration.glossaryLocation)
-                    .then(function (data) {
-                        data.text()
-                                .then(function (text) {
-                                    window.$docsify.terms = loadTerminology(text, configuration);
-                                    injectTerminologyInContent(content, configuration, next);
-                                });
-                    });
-        }
-
-        injectTerminologyInContent(content, configuration, next);
-    });
 }
