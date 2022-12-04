@@ -53,7 +53,7 @@ An overview of all the changes made to this codebase can be found in the [CHANGE
 * [x] add unit tests to the code to make this package more maintainable
 * [x] make glossary file name/location configurable, see [feature request #1](https://github.com/TheGreenToaster/docsify-glossary/issues/1)
 * [x] make terminology heading depth configurable, see [feature request #1](https://github.com/TheGreenToaster/docsify-glossary/issues/1)
-* [ ] fix issue with terminology replacements in page headers/titles, see: [bug report #6](https://github.com/TheGreenToaster/docsify-glossary/issues/6)
+* [x] fix issue with terminology replacements in page headers/titles, see: [bug report #6](https://github.com/TheGreenToaster/docsify-glossary/issues/6)
 * [ ] fix issue with terminology replacements in code blocks, see: [bug report #4](https://github.com/TheGreenToaster/docsify-glossary/issues/4)
 * [x] fix issue with multiple word terms, see: [bug report #13]([bug report #13](https://github.com/TheGreenToaster/docsify-glossary/issues/13))
 

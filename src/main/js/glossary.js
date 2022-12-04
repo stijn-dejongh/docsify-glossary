@@ -1,4 +1,9 @@
-function replaceTermInLine(term, contentLine, linkId) {
+function replaceTermInLine(term, contentLine, linkId, config) {
+    if(isTitle(contentLine) && !config.replaceTitleTerms) {
+        // Intentially not combined in the return statement, to avoid superfluous calculations
+        return contentLine;
+    }
+
     let re = new RegExp(`\\s(${term})[\\s$]`, 'ig');
 
     let reFullStop = new RegExp(`\\s(${term}).`, 'ig');
@@ -17,12 +22,12 @@ function isTitle(line) {
     return line.trim().startsWith('#');
 }
 
-export function replaceTerm(content, term, linkId) {
+export function replaceTerm(content, term, linkId, config) {
     let contentLines = content.split('\n');
     let processedText = '';
 
     contentLines.forEach( (line, _index) => {
-        let replacedLine = line.trim().length > 0 ? replaceTermInLine(term, line + ' ', linkId).trimEnd() : line;
+        let replacedLine = line.trim().length > 0 ? replaceTermInLine(term, line + ' ', linkId, config).trimEnd() : line;
         processedText += replacedLine + '\n';
     });
     return processedText;
@@ -34,7 +39,7 @@ export function addLinks(content, terms, config) {
         console.log(`Adding links for terminology: ${terms}`);
     }
     for (let term in terms) {
-        textWithReplacements = replaceTerm(textWithReplacements, term, terms[term]);
+        textWithReplacements = replaceTerm(textWithReplacements, term, terms[term], config);
     }
     return textWithReplacements;
 }
