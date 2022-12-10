@@ -147,5 +147,27 @@ describe('Glossary terminology injection', () => {
         expect(result).toContain('API api = apiService.fetchApis();');
         expect([...result.matchAll('/_glossary\\?id=api')]).toHaveLength(0);
     });
+
+    it('Word replacement is enabled after code block closes', () => {
+        const codeBlockWithTerminologyUsage = `
+            \`\`\`java
+            public String getApiName() {
+              API api = apiService.fetchApis();
+              return api.getName()
+            }
+            \`\`\`
+            
+            The above example fetches the version of a certain API specification.
+       `;
+
+        const configuration = glossifyConfig()
+                .withTitleTermReplacement(false)
+                .build();
+
+        let result = addLinks(codeBlockWithTerminologyUsage, dictionary, configuration);
+
+        expect(result).toContain('API api = apiService.fetchApis();');
+        expect([...result.matchAll('/_glossary\\?id=api')]).toHaveLength(1);
+    });
 });
 
