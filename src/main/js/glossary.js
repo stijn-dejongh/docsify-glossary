@@ -1,6 +1,6 @@
 function replaceTermInLine(term, contentLine, linkId, config) {
     if(isTitle(contentLine) && !config.replaceTitleTerms) {
-        // Intentially not combined in the return statement, to avoid superfluous calculations
+        // Intentionally not combined in the return statement, to avoid superfluous calculations
         return contentLine;
     }
 
@@ -12,8 +12,8 @@ function replaceTermInLine(term, contentLine, linkId, config) {
     let link = ` [$1](/_glossary?id=${linkId})`;
 
     let replacement = contentLine.replace(reComma, link + ',')
-            .replace(re, link + ' ')
-            .replace(reFullStop, link + '.');
+    .replace(re, link + ' ')
+    .replace(reFullStop, link + '.');
 
     return isTitle(contentLine) ? replacement.replaceAll(`[${term}]`, `[ ${term}]`): replacement;
 }
